@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XIME Digital Cafeteria - Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --xime-red: #ED1C24; }
+        .bg-xime-red { background-color: var(--xime-red); }
+        .text-xime-red { color: var(--xime-red); }
+        .border-xime-red { border-color: var(--xime-red); }
+        .hidden-section { display: none !important; }
+        .active-payment { border: 2px solid var(--xime-red); background-color: #fff5f5; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <nav class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-xime-red rounded flex items-center justify-center text-white font-bold">X</div>
+                <span class="text-xl font-bold tracking-tight text-gray-800">XIME <span class="text-xime-red">CANTEEN</span></span>
+            </div>
+            <div id="user-badge" class="hidden-section flex items-center text-sm font-medium text-gray-600">
+                <span class="bg-gray-100 px-3 py-1 rounded-full border">ID: XIME_STUDENT_01</span>
+            </div>
+        </div>
+    </nav>
+
+    <section id="page-login" class="min-h-[80vh] flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-b-8 border-xime-red">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Student Login</h2>
+            <p class="text-gray-500 mb-6 text-sm">Enter credentials to view today's menu</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Username</label>
+                    <input type="text" id="username" class="w-full p-3 border rounded-lg outline-none focus:border-red-500" placeholder="Student ID">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Password</label>
+                    <input type="password" id="password" class="w-full p-3 border rounded-lg outline-none focus:border-red-500" placeholder="••••••••">
+                </div>
+                <button onclick="navTo('page-menu')" class="w-full bg-xime-red text-white py-3 rounded-lg font-bold hover:bg-red-700 transition">Login</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="page-menu" class="hidden-section max-w-6xl mx-auto px-4 py-8">
+        <h2 class="text-2xl font-bold mb-6">Today's Menu <span class="text-gray-400 text-lg font-normal">/ Lunch</span></h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border">
+                    <div class="h-32 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-400">Meal Image</div>
+                    <h3 class="font-bold">North Indian Thali</h3>
+                    <p class="text-sm text-gray-500 mb-3">Roti, Dal, Paneer, Rice</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-xime-red">₹110</span>
+                        <button onclick="addToCart('North Indian Thali', 110)" class="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm">Add</button>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border">
+                    <div class="h-32 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-400">Meal Image</div>
+                    <h3 class="font-bold">Veg Fried Rice</h3>
+                    <p class="text-sm text-gray-500 mb-3">With Manchurian Gravy</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-xime-red">₹90</span>
+                        <button onclick="addToCart('Veg Fried Rice', 90)" class="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm">Add</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-lg h-fit border-t-4 border-xime-red">
+                <h3 class="font-bold text-lg mb-4">Your Selection</h3>
+                <div id="cart-list" class="space-y-3 mb-6 min-h-[50px]">
+                    <p class="text-gray-400 text-sm italic">Nothing added yet</p>
+                </div>
+                <div class="border-t pt-4">
+                    <div class="flex justify-between font-bold mb-6">
+                        <span>Total:</span>
+                        <span id="total-price" class="text-xime-red">₹0</span>
+                    </div>
+                    <button onclick="navTo('page-checkout')" id="checkout-btn" disabled class="w-full bg-gray-300 text-white py-3 rounded-lg font-bold">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="page-checkout" class="hidden-section max-w-2xl mx-auto px-4 py-12">
+        <div class="bg-white p-8 rounded-2xl shadow-xl border">
+            <h2 class="text-2xl font-bold mb-6">Select Payment</h2>
+            
+            <div class="space-y-4 mb-8">
+                <div onclick="selectPay(this)" class="p-4 border rounded-xl cursor-pointer flex items-center active-payment">
+                    <i class="fa-solid fa-mobile-screen-button text-xime-red mr-4 text-xl"></i>
+                    <div>
+                        <p class="font-bold">UPI Payment</p>
+                        <p class="text-xs text-gray-500">GPay, PhonePe, Paytm</p>
+                    </div>
+                </div>
+                <div onclick="selectPay(this)" class="p-4 border rounded-xl cursor-pointer flex items-center">
+                    <i class="fa-solid fa-wallet text-gray-400 mr-4 text-xl"></i>
+                    <div>
+                        <p class="font-bold">Pay Later / Mess Card</p>
+                        <p class="text-xs text-gray-500">Deduct from monthly balance</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="finishOrder()" class="w-full bg-xime-red text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-red-700 transition">
+                Pay <span id="pay-amount">₹0</span> & Place Order
+            </button>
+            <button onclick="navTo('page-menu')" class="w-full mt-4 text-gray-400 font-medium">Cancel & Go Back</button>
+        </div>
+    </section>
+
+    <div id="success-modal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+        <div class="bg-white p-8 rounded-3xl text-center max-w-sm w-full shadow-2xl scale-up-animation">
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800">Order Placed!</h2>
+            <p class="text-gray-500 mt-2 leading-relaxed">Collect your meal from the <strong>XIME counter</strong> in 15 mins.</p>
+            <button onclick="location.reload()" class="mt-8 w-full bg-gray-900 text-white py-3 rounded-xl font-bold">Done</button>
+        </div>
+    </div>
+
+    <script>
+        let cart = [];
+        let total = 0;
+
+        function navTo(pageId) {
+            // Hide all pages
+            ['page-login', 'page-menu', 'page-checkout'].forEach(id => {
+                document.getElementById(id).classList.add('hidden-section');
+            });
+            // Show target page
+            document.getElementById(pageId).classList.remove('hidden-section');
+            
+            if(pageId !== 'page-login') {
+                document.getElementById('user-badge').classList.remove('hidden-section');
+            }
+            window.scrollTo(0,0);
+        }
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            renderCart();
+        }
+
+        function renderCart() {
+            const list = document.getElementById('cart-list');
+            const totalEl = document.getElementById('total-price');
+            const btn = document.getElementById('checkout-btn');
+            
+            if(cart.length > 0) {
+                list.innerHTML = cart.map((item, i) => `
+                    <div class="flex justify-between text-sm">
+                        <span>${item.name}</span>
+                        <span class="font-bold">₹${item.price}</span>
+                    </div>
+                `).join('');
+                btn.disabled = false;
+                btn.classList.replace('bg-gray-300', 'bg-xime-red');
+            }
+            
+            total = cart.reduce((s, i) => s + i.price, 0);
+            totalEl.innerText = `₹${total}`;
+            document.getElementById('pay-amount').innerText = `₹${total}`;
+        }
+
+        function selectPay(el) {
+            document.querySelectorAll('#page-checkout .border').forEach(card => card.classList.remove('active-payment'));
+            el.classList.add('active-payment');
+        }
+
+        function finishOrder() {
+            document.getElementById('success-modal').classList.remove('hidden-section');
+        }
+    </script>
+</body>
+</html>
